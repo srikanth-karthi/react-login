@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect,useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useStoreActions, useStoreState } from 'easy-peasy';
@@ -15,10 +15,11 @@ const validationSchema = Yup.object().shape({
 });
 
 export const Login = () => {
+
   const login = useStoreActions((actions) => actions.auth.login);
   const isAuthenticated = useStoreState((state) => state.auth.isAuthenticated);
   const user = useStoreState((state) => state.auth.user);
-
+  const error = useStoreState((state) => state.auth.error);
   const handleSubmit = async (values, { setSubmitting }) => {
     await login(values);
     setSubmitting(false);
@@ -29,9 +30,7 @@ export const Login = () => {
     password: '',
   };
 
-  useEffect(() => {
-    console.log('isAuthenticated changed:', isAuthenticated);
-  }, [isAuthenticated]);
+
 
 
     return (
@@ -90,15 +89,17 @@ export const Login = () => {
                 </div>
 
             </div>
-            {isAuthenticated ? (<>
+            {isAuthenticated && <>
   <p style={{ color: 'green' }}>Login successful!</p>
   <h3>{user}</h3>
   </>
-            
-) : (
-  <p style={{ color: 'red' }}>Login failed. Please check your credentials.</p>
-)}
+}   
 
+{error && <>
+  <p style={{ color: 'red' }}>ERROR</p>
+  <h3>{error}</h3>
+  </>
+}   
         </div>
     )
 }
